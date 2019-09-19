@@ -1,13 +1,13 @@
 use actix_web::{error, Error, web, FromRequest, HttpResponse, Responder};
 use serde::{Deserialize,Serialize};
-use chrono::{DateTime, Utc};
+use chrono::{Utc};
 use futures::stream::once;
 use futures::stream::Once;
 use bytes::Bytes;
 
 #[derive(Deserialize)]
 struct EchoRequest {
-    username: String,
+    jaco123: String,
 }
 
 #[derive(Serialize)]
@@ -33,7 +33,7 @@ impl<'a> EchoResponse<'a> {
 
 /// deserialize `Info` from request's body, max payload size is 4kb
 fn index(req: web::Json<EchoRequest>) -> impl Responder {
-    let resp = EchoResponse::new( &req.username );
+    let resp = EchoResponse::new( &req.jaco123 );
     //format!("Welcome {}!", req.username)
     HttpResponse::Ok()
         .content_type("application/json")
