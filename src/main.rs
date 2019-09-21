@@ -7,19 +7,25 @@ use bytes::Bytes;
 
 #[derive(Deserialize)]
 struct EchoRequest {
-    jaco123: String,
+    username: String,
+}
+
+#[derive(Deserialize)]
+struct EchoRequestPath {
+    id: u32
 }
 
 #[derive(Serialize)]
 struct EchoResponse<'a> {
-    jaco123: &'a str,
-    echoedAt: String
+    id: u32,
+    username: &'a str,
+    echoed_at: String
 }
 
 impl<'a> EchoResponse<'a> {
-    pub fn new(jaco123: &'a str) -> Self {
-        EchoResponse{ jaco123: jaco123, 
-        echoedAt: Utc::now().to_rfc2822()}
+    pub fn new(id: u32,username: &'a str) -> Self {
+        EchoResponse{ id: id, username: username, 
+        echoed_at: Utc::now().to_rfc2822()}
     }
 
     pub fn to_json(&self) -> Once<Bytes, Error> {
@@ -32,8 +38,8 @@ impl<'a> EchoResponse<'a> {
 }
 
 /// deserialize `Info` from request's body, max payload size is 4kb
-fn index(req: web::Json<EchoRequest>) -> impl Responder {
-    let resp = EchoResponse::new( &req.jaco123 );
+fn index((path, req): (web::Path<EchoRequestPath>, web::Json<EchoRequest>)) -> impl Responder {
+    let resp = EchoResponse::new(path.id, &req.username );
     //format!("Welcome {}!", req.username)
     HttpResponse::Ok()
         .content_type("application/json")
